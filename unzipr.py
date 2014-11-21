@@ -22,6 +22,7 @@ the zip file minus its extension. So foo.zip is extracted in to a directory
 named foo.
 
 New formats can be supports via Unzipr.registerUnzipFormat().
+See installRarSupport() at the end of this file for an example.
 '''
 
 
@@ -87,3 +88,17 @@ def getSupportedExtensions():
 
 def registerUnzipFormat(name, extensions, function):
     shutil.register_unpack_format(name, extensions, function)
+
+def installRarSupport():
+    try:
+        import rarfile
+
+        def unrar(zipFile, toDir):
+            with rarfile.RarFile(zipFile) as rf:
+                rf.extractall(path=toDir)
+    
+        registerUnzipFormat('rar', ['.rar'], unrar)
+    except ImportError:
+        pass
+
+installRarSupport()
