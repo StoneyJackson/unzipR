@@ -2,6 +2,10 @@
 
 A libarary providing recursive extraction of files.
 
+## License
+
+GPLv3
+
 ## Features
 
 * Supports multiple compression formats:
