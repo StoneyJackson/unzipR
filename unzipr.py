@@ -29,11 +29,23 @@ import pathlib
 import shutil
 
 
-def unzipFileRecursively(zipfile):
+def deleteZipFilesFromDirectoryRecursively(directory):
+    directory = pathlib.Path(directory)
+    for a_file in directory.iterdir():
+        if isZipFile(a_file):
+            a_file.unlink()
+        elif a_file.is_dir():
+            deleteZipFilesFromDirectoryRecursively(a_file)
+
+def unzipFileRecursively(zipfile, toDir=None):
+    '''
+    If toDir is None, zipfile is extracted to a directory whose name is the same
+    as the zipfile's name minus its extensions.
+    '''
     zipfile = pathlib.Path(zipfile)
-    unzipFile(zipfile)
-    unzipped_directory = zipfile.parent / zipfile.stem
-    unzipFilesInDirectoryRecursively(unzipped_directory)
+    toDir = unzipFile(zipfile, toDir)
+    unzipFilesInDirectoryRecursively(toDir)
+    return toDir
 
 def unzipFilesInDirectoryRecursively(directory):
     directory = pathlib.Path(directory)
@@ -43,10 +55,18 @@ def unzipFilesInDirectoryRecursively(directory):
         elif a_file.is_dir():
             unzipFilesInDirectoryRecursively(a_file)
 
-def unzipFile(zipfile):
+def unzipFile(zipfile, toDir=None):
+    '''
+    If toDir is None, zipfile is extracted to a directory whose name is the same
+    as the zipfile's name minus its extensions.
+    '''
     zipfile = pathlib.Path(zipfile)
-    out_directory = zipfile.parent / zipfile.stem
-    shutil.unpack_archive(str(zipfile), str(out_directory))
+    if toDir:
+        toDir = pathlib.Path(toDir)
+    else:
+        toDir = zipfile.parent / zipfile.stem
+    shutil.unpack_archive(str(zipfile), str(toDir))
+    return toDir
 
 def isZipFile(zipfile):
     zipfile = pathlib.Path(zipfile)
