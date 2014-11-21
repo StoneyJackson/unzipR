@@ -1,6 +1,6 @@
 # unzipr.py
 
-A libarary providing recursive extraction of files.
+A libarary for recursively extracting files.
 
 ## License
 
