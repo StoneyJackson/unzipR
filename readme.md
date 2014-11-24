@@ -1,4 +1,4 @@
-# unzipr.py
+# unzipR
 
 A libarary for recursively extracting files.
 

@@ -1,4 +1,4 @@
-#   unzipr.py - A library for recursively extracting files.
+#   unzipR - A library for recursively extracting files.
 #   Copyright (C) 2014  Stoney Jackson <dr.stoney@gmail.com>
 #
 #   This program is free software: you can redistribute it and/or modify
