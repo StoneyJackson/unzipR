@@ -101,4 +101,16 @@ def installRarSupport():
     except ImportError:
         pass
 
+
+def install7zipSupport():
+    if shutil.which('7z'):
+        import subprocess
+
+        def un7zip(zipFile, toDir):
+            subprocess.call(['7z', 'x', str(zipFile), '-o' + str(toDir)])
+
+        registerUnzipFormat('7zip', ['.7z'], un7zip)
+
+
 installRarSupport()
+install7zipSupport()
