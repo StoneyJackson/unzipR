@@ -28,6 +28,8 @@ See installRarSupport() at the end of this file for an example.
 
 import pathlib
 import shutil
+import logging
+logger = logging.getLogger(__name__)
 
 
 def deleteZipFilesFromDirectoryRecursively(directory):
@@ -51,9 +53,12 @@ def unzipFileRecursively(zipfile, toDir=None):
 def unzipFilesInDirectoryRecursively(directory):
     directory = pathlib.Path(directory)
     for a_file in directory.iterdir():
+        logger.debug("processing " + str(a_file))
         if isZipFile(a_file):
+            logger.debug("unzipping " + str(a_file))
             unzipFileRecursively(a_file)
         elif a_file.is_dir():
+            logger.debug("recursing " + str(a_file))
             unzipFilesInDirectoryRecursively(a_file)
 
 def unzipFile(zipfile, toDir=None):
@@ -65,17 +70,32 @@ def unzipFile(zipfile, toDir=None):
     if toDir:
         toDir = pathlib.Path(toDir)
     else:
-        toDir = zipfile.parent / zipfile.stem
+        toDir = zipfile.parent / getFileNameWithoutExtension(zipfile)
     shutil.unpack_archive(str(zipfile), str(toDir))
     return toDir
 
+def getFileNameWithoutExtension(theFile):
+    theFile = pathlib.Path(theFile)
+    extension = getFileExtension(theFile)
+    return theFile.name[:-len(extension)]
+
 def isZipFile(zipfile):
     zipfile = pathlib.Path(zipfile)
-    return zipfile.is_file() and fileHasSupportedExtension(zipfile)
+    isZipFile = zipfile.is_file() and fileHasSupportedExtension(zipfile)
+    return isZipFile
 
 def fileHasSupportedExtension(zipfile):
     zipfile = pathlib.Path(zipfile)
-    return isSupportedExtension(zipfile.suffix)
+    extension = getFileExtension(zipfile)
+    return isSupportedExtension(extension)
+
+def getFileExtension(theFile):
+    if len(theFile.suffixes) >= 2:
+        lastTwoSuffixes = ''.join(theFile.suffixes[-2:])
+        if lastTwoSuffixes == '.tar.gz':
+            return lastTwoSuffixes
+    else:
+        return theFile.suffix
 
 def isSupportedExtension(extension):
     return extension in getSupportedExtensions()
